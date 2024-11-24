@@ -1,0 +1,463 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Calculator</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      width: 100vw;
+      height: 100vh;
+      display: grid;
+      place-items: center;
+      background-color: #312c2c;
+    }
+
+    .wrapper {
+      background-color: #556;
+      padding: .5rem;
+      border-radius: 9px;
+      width: 100%;
+      max-width: 19rem;
+    }
+
+    .container {
+      /* border: 1px solid #fff; */
+      /* padding: .3rem; */
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      border-radius: 9px;
+      background-color: #333;
+    }
+
+    .btn {
+      /* border-radius: 5px; */
+      border: 1px solid #333;
+      outline: none;
+      /* margin: .08rem; */
+      /* width: 2.5rem;
+      height: 2.5rem; */
+      font-size: 1.4rem;
+      background-color: #444;
+      color: #ffffff;
+      /* box-shadow: 0 7px 8px rgba(0, 0, 0, 0.7); */
+      /* box-shadow: 0 7px 4px -2px rgba(0, 0, 0, 0.4); */
+      padding: 1rem;
+      cursor: pointer;
+    }
+
+    .btn:hover {
+      background-color: #555;
+      /* transform: scale(1.03) translatey(-3px); */
+    }
+
+    .btn:nth-child(4n) {
+      background-color: #666;
+    }
+
+    .btn:nth-child(4n):hover {
+      background-color: #777;
+    }
+
+    .btn:last-child{
+      background-color: #444;
+    }
+
+
+    .result-box {
+      /* border: 1px solid #fb0000; */
+      /* background-color: rgb(113, 142, 113); */
+      margin: 1rem 0;
+      /* box-shadow: 0 5px 5px 2px rgba(0, 0, 0, 0.2); */
+    }
+
+    #result {
+      width: 100%;
+      height: 4rem;
+      outline: none;
+      border: none;
+      font-size: 2rem;
+      background-color: #111;
+      color: #fff;
+    }
+
+    .preview {
+      margin: -0.5rem 0 0.5rem 0;
+      color: #ccc;
+      background-color: #556;
+      border: none;
+      outline: none;
+      font-size: 1.5rem;
+      width: 100%;
+    }
+
+    .navbar {
+      color: #fff;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="wrapper">
+    <div class="navbar">
+      <u>Calculator</u>
+    </div>
+    <form name="form" class="form-one">
+      <div class="result-box">
+        <input type="text" id="result" class="result" value="0" disabled />
+      </div>
+      <input type="text" id="preview" class="preview" placeholder="Result : " disabled />
+      <!-- <div class="preview">Result: </div> -->
+      <div class="container">
+        <input type="button" value="AC" class="btn" />
+        <input type="button" value="(" class="btn" />
+        <input type="button" value=")" class="btn" />
+        <input type="button" value="←" class="btn" />
+        <input type="button" value="7" class="btn" />
+        <input type="button" value="8" class="btn" />
+        <input type="button" value="9" class="btn" />
+        <input type="button" value="÷" class="btn" />
+        <input type="button" value="4" class="btn" />
+        <input type="button" value="5" class="btn" />
+        <input type="button" value="6" class="btn" />
+        <input type="button" value="×" class="btn" />
+        <input type="button" value="1" class="btn" />
+        <input type="button" value="2" class="btn" />
+        <input type="button" value="3" class="btn" />
+        <input type="button" value="-" class="btn" />
+        <input type="button" value="." class="btn" />
+        <input type="button" value="0" class="btn" />
+        <input type="button" value="=" class="btn" />
+        <input type="button" value="+" class="btn" />
+        <input type="button" value="x²" class="btn" />
+        <input type="button" value="x³" class="btn" />
+        <input type="button" value="√x" class="btn" />
+        <input type="button" value="∛x" class="btn" />
+      </div>
+    </form>
+  </div>
+
+  <script>
+    const result = document.getElementById('result');
+    const preview = document.getElementById('preview');
+    const allButtons = document.querySelectorAll('.btn');
+    // console.log(allButtons);
+
+    allButtons.forEach((btn) => {
+      controlBtnAction(btn);
+      // if(elem.getAttribute("onclick")){
+      //   display(elem);
+      // }
+    });
+
+    function controlBtnAction(btn) {
+      btn.addEventListener("click", (e) => {
+        let input = btn.value;
+        // console.log(btn.value);
+        // console.log(typeof(btn.value));
+        examine(input);
+        livePreview();
+      });
+    }
+
+    function examine(input) {
+      switch (input) {
+        case "AC":
+          clearScreen();
+          break;
+        case "←":
+          backspace();
+          break;
+        case "=":
+          calculate();
+          break;
+        case "x²":
+          square();
+          break;
+        case "x³":
+          cube();
+          break;
+        case "√x":
+          squareroot();
+          break;
+        case "∛x":
+          cuberoot();
+          break;
+        default:
+          display(input);
+          break;
+      }
+    }
+
+    let displayChar = "";
+
+    function display(input) {
+      if (result.value === "0" || result.value === "" || result.value === "NaN") {
+        if (input === "0" || input === "00") {
+          displayChar = "0";
+          result.value = "0";
+        }
+        else {
+          result.value = "";
+          displayChar += input;
+          result.value = displayChar;
+          displayChar = "";
+        }
+      }
+      else {
+        displayChar += input;
+        result.value += displayChar;
+        displayChar = "";
+      }
+    }
+
+    function backspace() {
+      //document.form.answer.value = document.form.answer.value.substr(0, form.answer.value.length-1);
+      let disp = result.value;
+      //console.log(disp.value);
+      //console.log(disp.length);
+      let d = disp.substr(0, disp.length - 1);
+      //console.log(d);
+      result.value = d;
+      let ch;
+      for (let i = 0; i <= d.length - 1; i++) {
+        if (!isNaN(d[i]) || ch === '.') {
+          ch += d[i];
+        }
+      }
+      if (ch) {
+        preview.value = ch;
+      }
+      else {
+        preview.value = "";
+      }
+    }
+
+    function clearScreen() {
+      result.value = "";
+      preview.value = "";
+    }
+
+    function square() {
+      let displayValue = "";
+      try {
+        displayValue = parseAndCompute(convertToExpression());
+      } catch (e) {
+        displayValue = e.message;
+      }
+      // console.log(displayValue);
+      if (isNaN(displayValue) || displayValue == "Division by Zero") {
+        result.value = "Error";
+      } else {
+        result.value = Math.pow(parseFloat(displayValue), 2);
+      }
+    }
+
+    function cube() {
+      let displayValue = "";
+      try {
+        displayValue = parseAndCompute(convertToExpression());
+      } catch (e) {
+        displayValue = e.message;
+      }
+      // console.log(displayValue);
+      if (isNaN(displayValue) || displayValue == "Division by Zero") {
+        result.value = "Error";
+      } else {
+        result.value = Math.pow(parseFloat(displayValue), 3);
+      }
+    }
+    
+    function squareroot() {
+      let displayValue = "";
+      try {
+        displayValue = parseAndCompute(convertToExpression());
+      } catch (e) {
+        displayValue = e.message;
+      }
+      // console.log(displayValue);
+      if (isNaN(displayValue) || displayValue == "Division by Zero") {
+        result.value = "Error";
+      } else {
+        result.value = Math.sqrt(parseFloat(displayValue), 2);
+      }
+    }
+    
+    function cuberoot() {
+      let displayValue = "";
+      try {
+        displayValue = parseAndCompute(convertToExpression());
+      } catch (e) {
+        displayValue = e.message;
+      }
+      // console.log(displayValue);
+      if (isNaN(displayValue) || displayValue == "Division by Zero") {
+        result.value = "Error";
+      } else {
+        result.value = Math.cbrt(parseFloat(displayValue));
+      }
+    }
+
+    
+
+    function convertToExpression() {
+      convert = result.value;
+      // console.log(convert);
+      // console.log(convert.length);
+      let newStr = "";
+      for (let i = 0; i <= convert.length - 1; i++) {
+        convert = convert.replace("×", "*");
+        convert = convert.replace("÷", "/");
+        newStr += convert[i];
+      }
+      // console.log(convert);
+      // console.log(newStr);
+      return newStr;
+    }
+
+
+    function calculate() {
+      let originalExpression = result.value;
+      console.log(originalExpression);
+
+      let expression = convertToExpression();
+      let output;
+      try {
+        output = parseAndCompute(expression);
+      } catch (e) {
+        output = e.message;
+      }
+      // console.log(output);
+      if (isNaN(output) && output != "Division by Zero") {
+        result.value = "Error";
+      }
+      else {
+        result.value = output;
+      }
+    }
+
+    // Custom function to parse and compute expressions
+    function parseAndCompute(expression) {
+      const tokens = tokenize(expression);
+      const values = [];
+      const operators = [];
+
+      // Tokenizes the input expression
+      function tokenize(expr) {
+        const tokens = [];
+        let current = "";
+        for (let i = 0; i < expr.length; i++) {
+          const char = expr[i];
+          if (char >= '0' && char <= '9' || char === '.') {
+            current += char;
+          } else {
+            if (current) {
+              tokens.push(current);
+              current = "";
+            }
+            if (char === '-' && (i === 0 || "+-*/(".includes(expr[i - 1]))) {
+              // Handle negative numbers
+              current = "-";
+            } else {
+              tokens.push(char);
+            }
+          }
+        }
+        if (current) tokens.push(current);
+        return tokens;
+      }
+
+      // Precedence levels for operators
+      function precedence(op) {
+        if (op === '+' || op === '-') return 1;
+        if (op === '*' || op === '/') return 2;
+        return 0;
+      }
+
+      // Apply the operator to the top values in the stack
+      function applyOperator() {
+        const operator = operators.pop();
+        const right = values.pop();
+        const left = values.pop();
+        switch (operator) {
+          case '+': values.push(left + right); break;
+          case '-': values.push(left - right); break;
+          case '*': values.push(left * right); break;
+          case '/':
+            if (right === 0) {
+              throw new Error("Division by Zero")
+            } else {
+              values.push(left / right);
+            }
+            break;
+        }
+      }
+
+      for (let token of tokens) {
+        if (!isNaN(token)) {
+          values.push(parseFloat(token));
+        } else if (token === '(') {
+          operators.push(token);
+        } else if (token === ')') {
+          while (operators.length && operators[operators.length - 1] !== '(') {
+            applyOperator();
+          }
+          operators.pop();
+        } else if (token === '+' || token === '-' || token === '*' || token === '/') {
+          while (operators.length && precedence(operators[operators.length - 1]) >= precedence(token)) {
+            applyOperator();
+          }
+          operators.push(token);
+        }
+      }
+
+      while (operators.length) {
+        applyOperator();
+      }
+
+      return values[0];
+    }
+
+
+
+
+
+    function livePreview() {
+      // console.log(parseAndCompute(convertToExpression()));
+      let liveUpdateData = "";
+
+      try {
+        liveUpdateData = parseAndCompute(convertToExpression());
+      } catch (e) {
+        // result.value = e.message;
+        liveUpdateData = e.message;
+      }
+
+      // console.log(typeof(liveUpdateData));
+      // console.log(isNaN(liveUpdateData));
+      // preview.innerHTML = `Result: ${liveUpdateData}`;
+
+
+      if (isNaN(liveUpdateData) && liveUpdateData != "Division by Zero") {
+        //console.log("catch");
+      } else {
+        // console.log(liveUpdateData);
+        preview.value = liveUpdateData;
+      }
+    }
+
+    result.addEventListener("input", livePreview);
+
+
+
+  </script>
+</body>
+
+</html>
